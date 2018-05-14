@@ -46,11 +46,26 @@ In nav project comment out existing Groovy tests mvn execution in script `.run.s
 
 ## Run test with sbt ##
 ```sh
-sbt> testOnly example.NavaKlaraVideo 
+sbt> testOnly example.NavKlaraVideoSpecAsync 
 ```
 
 ## Run test with IntelliJ ##
 Right click on test an choose run
+
+## Output
+```sh
+[info] NavKlaraVideoSpecAsync:
+[info] Feature: Videos
+[info] - Scenario: Fetch a single video
+[info]   + Given there is a video added to elasticsearch
+[info]   + When fetching a video with id dn.screen9.1uwHxJLDuuBKBHGHQcissw from nav-klara-dn
+[info]   + Then response should contain the right data
+[info] Run completed in 1 second, 514 milliseconds.
+[info] Total number of tests run: 1
+[info] Suites: completed 1, aborted 0
+[info] Tests: succeeded 1, failed 0, canceled 0, ignored 0, pending 0
+[info] All tests passed.
+```
 
 ### Pros
 + Can be run by IntelliJ
