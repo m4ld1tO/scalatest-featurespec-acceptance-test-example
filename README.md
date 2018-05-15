@@ -73,11 +73,11 @@ Right click on test an choose run
 [info] NavKlaraVideoSpecAsync:
 [info] Feature: Videos
 [info] - Scenario: Fetch a single video *** FAILED ***
-[info]   {"id":"dn.screen9.1uwHxJLDuuBKBHGHQcissw","fileName"..."status":"publishedXX"} (NavKlaraVideoSpecAsync.scala:48)
+[info]   {"id":"dn.screen9.1uwHxJLDuuBKBHGHQcissw",...,"status":"published"} did not equal {"id":"dn.screen9.1uwHxJLDuuBKBHGHQcissw",,"status":"publishedxx"} (NavKlaraVideoSpecAsync.scala:48)
 [info]   + Given there is a video added to elasticsearch with id dn.screen9.1uwHxJLDuuBKBHGHQcissw
 [info]   + When fetching a video with id dn.screen9.1uwHxJLDuuBKBHGHQcissw
 [info]   + Then response should contain the right data
-[info] Run completed in 1 second, 999 milliseconds.
+[info] Run completed in 1 second, 788 milliseconds.
 [info] Total number of tests run: 1
 [info] Suites: completed 1, aborted 0
 [info] Tests: succeeded 0, failed 1, canceled 0, ignored 0, pending 0
@@ -85,7 +85,7 @@ Right click on test an choose run
 [error] Failed tests:
 [error] 	example.NavKlaraVideoSpecAsync
 [error] (Test / test) sbt.TestsFailedException: Tests unsuccessful
-[error] Total time: 10 s, completed May 14, 2018 3:19:52 PM
+[error] Total time: 8 s, completed May 15, 2018 11:23:48 AM
 ```
 
 ### Pros
