@@ -18,32 +18,6 @@ class NavKlaraVideoSpecAsync extends AsyncFeatureSpec with GivenWhenThen with Be
   implicit val materializer: ActorMaterializer = ActorMaterializer()
   val ws = StandaloneAhcWSClient()
 
-//  after {
-//    ws.url("http://es-content.dev.bonnier.news:9200/klara1/klara/dn.screen9.1uwHxJLDuuBKBHGHQcissw/")
-//      .delete() map {
-//      response => assert(response.status == 404 || response.status == 200)
-//    }
-//    ws.close()
-//    system.terminate()
-//  }
-
-  after {
-    ws.url("http://es-content.dev.bonnier.news:9200/klara1/klara/dn.screen9.1uwHxJLDuuBKBHGHQcissw/")
-      .get() map {
-      response =>
-        response.status match {
-          case 200 =>
-            ws.url("http://es-content.dev.bonnier.news:9200/klara1/klara/dn.screen9.1uwHxJLDuuBKBHGHQcissw/")
-              .delete()
-            println("Deleted video from ElasticSearch")
-          case _ =>
-            println("No delete: Status code recieved: " + response.status)
-        }
-    }
-    ws.close()
-    system.terminate()
-  }
-
   feature("Videos") {
 
     scenario("Fetch a single video") {
@@ -55,7 +29,7 @@ class NavKlaraVideoSpecAsync extends AsyncFeatureSpec with GivenWhenThen with Be
           ws.url("http://es-content.dev.bonnier.news:9200/klara1/klara/dn.screen9.1uwHxJLDuuBKBHGHQcissw/")
             .post(videoElasticJsValue)
         postVideoElasticResponse map {
-          response => assert(response.status == 201 || response.status == 200 )
+          response => assert(response.status == 201 || response.status == 200)
         }
 
       When("fetching a video with id dn.screen9.1uwHxJLDuuBKBHGHQcissw")
@@ -74,6 +48,15 @@ class NavKlaraVideoSpecAsync extends AsyncFeatureSpec with GivenWhenThen with Be
           assert(jsValue == expectedKlaraJsValue)
         }
     }
+  }
+
+  after {
+    ws.url("http://es-content.dev.bonnier.news:9200/klara1/klara/dn.screen9.1uwHxJLDuuBKBHGHQcissw/")
+      .delete() map {
+      response => assert(response.status == 404 || response.status == 200)
+    }
+    ws.close()
+    system.terminate()
   }
 }
 
