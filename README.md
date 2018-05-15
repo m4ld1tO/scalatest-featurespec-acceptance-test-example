@@ -60,11 +60,12 @@ Right click on test an choose run
 [info]   + Given there is a video added to elasticsearch with id dn.screen9.1uwHxJLDuuBKBHGHQcissw
 [info]   + When fetching a video with id dn.screen9.1uwHxJLDuuBKBHGHQcissw
 [info]   + Then response should contain the right data
-[info] Run completed in 1 second, 514 milliseconds.
+[info] Run completed in 1 second, 755 milliseconds.
 [info] Total number of tests run: 1
 [info] Suites: completed 1, aborted 0
 [info] Tests: succeeded 1, failed 0, canceled 0, ignored 0, pending 0
 [info] All tests passed.
+[success] Total time: 8 s, completed May 15, 2018 11:21:59 AM
 ```
 
 ## Test Failure Outout
