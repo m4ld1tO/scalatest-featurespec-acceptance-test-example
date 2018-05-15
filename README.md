@@ -92,5 +92,6 @@ Right click on test an choose run
 + Can be run by IntelliJ
 + \<Click to se difference> in IntelliJ works
 + Nice output
++ Good documentation
  
 ### Cons
