@@ -10,6 +10,7 @@ import play.api.libs.ws.StandaloneWSResponse
 import play.api.libs.ws.ahc._
 
 import scala.concurrent.Future
+import scala.io.Source
 
 class NavKlaraVideoSpecAsync extends AsyncFeatureSpec with GivenWhenThen with BeforeAndAfter {
 
@@ -17,10 +18,27 @@ class NavKlaraVideoSpecAsync extends AsyncFeatureSpec with GivenWhenThen with Be
   implicit val materializer: ActorMaterializer = ActorMaterializer()
   val ws = StandaloneAhcWSClient()
 
+//  after {
+//    ws.url("http://es-content.dev.bonnier.news:9200/klara1/klara/dn.screen9.1uwHxJLDuuBKBHGHQcissw/")
+//      .delete() map {
+//      response => assert(response.status == 404 || response.status == 200)
+//    }
+//    ws.close()
+//    system.terminate()
+//  }
+
   after {
     ws.url("http://es-content.dev.bonnier.news:9200/klara1/klara/dn.screen9.1uwHxJLDuuBKBHGHQcissw/")
-      .delete() map {
-      response => assert(response.status == 404 || response.status == 200)
+      .get() map {
+      response =>
+        response.status match {
+          case 200 =>
+            ws.url("http://es-content.dev.bonnier.news:9200/klara1/klara/dn.screen9.1uwHxJLDuuBKBHGHQcissw/")
+              .delete()
+            println("Deleted video from ElasticSearch")
+          case _ =>
+            println("No delete: Status code recieved: " + response.status)
+        }
     }
     ws.close()
     system.terminate()
@@ -30,27 +48,30 @@ class NavKlaraVideoSpecAsync extends AsyncFeatureSpec with GivenWhenThen with Be
 
     scenario("Fetch a single video") {
 
-      Given("there is a video added to elasticsearch")
-        val videoEpiJson: JsValue = JsValueReader.getJsValue("/es-dn.screen9.1uwHxJLDuuBKBHGHQcissw.json")
-        val postVideoResponse: Future[StandaloneWSResponse] =
+      Given("there is a video added to elasticsearch with id dn.screen9.1uwHxJLDuuBKBHGHQcissw")
+        val videoElasticJson = Source.fromURL(getClass.getResource("/es-dn.screen9.1uwHxJLDuuBKBHGHQcissw.json")).mkString
+        val videoElasticJsValue = Json.parse(videoElasticJson)
+        val postVideoElasticResponse: Future[StandaloneWSResponse] =
           ws.url("http://es-content.dev.bonnier.news:9200/klara1/klara/dn.screen9.1uwHxJLDuuBKBHGHQcissw/")
-            .post(videoEpiJson)
-        postVideoResponse map {
+            .post(videoElasticJsValue)
+        postVideoElasticResponse map {
           response => assert(response.status == 201 || response.status == 200 )
         }
 
-      When("fetching a video with id dn.screen9.1uwHxJLDuuBKBHGHQcissw from nav-klara-dn")
-        val getVideoResponse: Future[StandaloneWSResponse] =
+      When("fetching a video with id dn.screen9.1uwHxJLDuuBKBHGHQcissw")
+        val getVideoKlaraResponse: Future[StandaloneWSResponse] =
           ws.url("http://nav-klara-dn.dev.internal.bonnier.news/videos/dn.screen9.1uwHxJLDuuBKBHGHQcissw")
             .get()
-        val jsValueFuture: Future[JsValue] = getVideoResponse map { response =>
+        val jsValueFuture: Future[JsValue] = getVideoKlaraResponse map { response =>
           assert(response.status == 200)
           response.body[JsValue]
-      }
+        }
 
       Then("response should contain the right data")
         jsValueFuture map { jsValue =>
-          assert(jsValue == JsValueReader.getJsValue("/nav-dn.screen9.1uwHxJLDuuBKBHGHQcissw.json"))
+          val expectedKlaraJson = Source.fromURL(getClass.getResource("/nav-dn.screen9.1uwHxJLDuuBKBHGHQcissw.json")).mkString
+          val expectedKlaraJsValue = Json.parse(expectedKlaraJson)
+          assert(jsValue == expectedKlaraJsValue)
         }
     }
   }
