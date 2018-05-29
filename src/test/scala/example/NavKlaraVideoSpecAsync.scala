@@ -31,10 +31,11 @@ class NavKlaraVideoSpecAsync extends AsyncFeatureSpec with GivenWhenThen with Be
         val postVideoElasticResponse: Future[StandaloneWSResponse] =
           ws.url("http://es-content.dev.bonnier.news:9200/klara1/klara/dn.screen9.1uwHxJLDuuBKBHGHQcissw/")
             .post(videoElasticJsValue)
+
       Await.result(postVideoElasticResponse, 5 seconds) //AsyncFeatureSpec only blocks async call in Then
         postVideoElasticResponse map {
           response =>
-            println("#### GIVEN")
+            //println("#### GIVEN")
             assert(response.status == 201)
         }
 
@@ -42,17 +43,18 @@ class NavKlaraVideoSpecAsync extends AsyncFeatureSpec with GivenWhenThen with Be
         val getVideoKlaraResponse: Future[StandaloneWSResponse] =
           ws.url("http://nav-klara-dn.dev.internal.bonnier.news/videos/dn.screen9.1uwHxJLDuuBKBHGHQcissw")
             .get()
+
         Await.result(getVideoKlaraResponse, 5 seconds) //AsyncFeatureSpec only blocks async call in Then
         val jsValueFuture: Future[JsValue] = getVideoKlaraResponse map {
           response =>
-            println("#### WHEN")
+            //println("#### WHEN")
             assert(response.status == 200)
             response.body[JsValue]
         }
 
       Then("response should contain the right data")
         jsValueFuture map { jsValue => //Automatically blocked by AsyncFeatureSpec
-          println("#### THEN")
+//          println("#### THEN")
           val expectedKlaraJson = Source.fromURL(getClass.getResource("/nav-dn.screen9.1uwHxJLDuuBKBHGHQcissw.json")).mkString
           val expectedKlaraJsValue = Json.parse(expectedKlaraJson)
           assert(jsValue == expectedKlaraJsValue)
@@ -61,7 +63,7 @@ class NavKlaraVideoSpecAsync extends AsyncFeatureSpec with GivenWhenThen with Be
     }
 
     after {
-      println("#### AFTER")
+      //println("#### AFTER")
       ws.url("http://es-content.dev.bonnier.news:9200/klara1/klara/dn.screen9.1uwHxJLDuuBKBHGHQcissw/")
         .delete() map {
         response => assert(response.status == 404 || response.status == 200)
